@@ -13,22 +13,26 @@ public class WechatSDKPlugin: CAPPlugin {
     override public func load() {
         WechatSDKPlugin.sharedInstance=self
         //在register之前打开log, 后续可以根据log排查问题 0:打印正常日志；1:打印详细日志
-        //        WXApi.startLog(by: WXLogLevel(rawValue: 0)!) { log in
-        //            print("WeChatSDK:",log);
-        //        }
+                // WXApi.startLog(by: WXLogLevel(rawValue: 0)!) { log in
+                //     print("WeChatSDK:",log);
+                // }
         
         //注册微信支付
-        let appId = self.bridge?.config.getString("wechatAppId") ?? ""
-        let universalLink = self.bridge?.config.getString("wechatUniversalLink") ?? ""
-        //        print("wechat appId:",appId)
-        //        print("wechat universalLink:",universalLink)
-        WXApi.registerApp(appId , universalLink: universalLink );
+
+        // print("$$$$$$$$$$$$$$$$$---->", self.pluginName)
+//        let appId = getConfigValue("wechatAppId") ?? ""
+//        let universalLink = getConfigValue("wechatUniversalLink") ?? ""
+        let appId = self.bridge?.config.getPluginConfigValue(self.pluginName, "wechatAppId") ?? ""
+        let universalLink = self.bridge?.config.getPluginConfigValue(self.pluginName, "wechatUniversalLink") ?? ""
+            //    print("wechat appId:",appId)
+            //    print("wechat universalLink:",universalLink)
+        WXApi.registerApp(appId as! String , universalLink: universalLink as! String );
         //调用自检函数
-        //        WXApi.checkUniversalLinkReady { step, result in
-        //            print("自检测步骤=====>",step, "结果=====>",result.success, "错误原因=====>",result.errorInfo,"建议=====>", result.suggestion);
-        //        }
+                // WXApi.checkUniversalLinkReady { step, result in
+                //     print("自检测步骤=====>",step, "结果=====>",result.success, "错误原因=====>",result.errorInfo,"建议=====>", result.suggestion);
+                // }
         
-        //        WXApiManager.sharedInstance.delegate=self
+//                WXApiManager.sharedInstance.delegate=self
         
     }
     
@@ -117,10 +121,14 @@ public class WechatSDKPlugin: CAPPlugin {
         DispatchQueue.main.async {
             
             let req = SendMessageToWXReq()
-            
+
+            let scene = Int32(WXSceneSession.rawValue)
+            print("$$$$$$$$$$$$$$$$$$$$$$$$ =>>>> " + String(scene))
             req.text = call.getString("text")!
             req.bText = true
-            req.scene = Int32(call.getInt("scene")!)
+//          req.scene = Int32(call.getInt("scene")!)
+            req.scene = Int32(WXSceneSession.rawValue)
+
             
             guard let callbackId = call.callbackId else {
                 call.reject("The call has no callbackId")
